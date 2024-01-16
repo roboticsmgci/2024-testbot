@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,6 +21,7 @@ public class Arm extends SubsystemBase {
   private final RelativeEncoder encoder1;
   private final RelativeEncoder encoder2;
   
+  private final Translation2d base = new Translation2d(0, 0);
   private final double arm1 = 1;
   // private final double arm2 = 1;
   /** Creates a new ExampleSubsystem. */
@@ -34,10 +36,24 @@ public class Arm extends SubsystemBase {
     encoder2.setPosition(0);
   }
 
-  private Pose2d getInoutPos(){
-      return new Pose2d(arm1*Math.cos(encoder1.getPosition()), 
-        arm1*Math.sin(encoder1.getPosition()), 
-        new Rotation2d(encoder1.getPosition()+encoder2.getPosition()));
+  public Pose2d getArmPos(){
+    return new Pose2d(base.getX(), 
+      base.getY(), 
+      new Rotation2d(encoder1.getPosition()));
+  }
+
+  public Pose2d getInoutPos(){
+    return new Pose2d(base.getX()+arm1*Math.cos(encoder1.getPosition()), 
+      base.getY()+arm1*Math.sin(encoder1.getPosition()), 
+      new Rotation2d(encoder1.getPosition()+encoder2.getPosition()));
+  }
+
+  public void setArm(double speed){
+    joint1.set(speed);
+  }
+
+  public void setInout(double speed){
+    joint2.set(speed);
   }
 
   /**
